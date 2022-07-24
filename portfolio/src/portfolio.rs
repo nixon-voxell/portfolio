@@ -1,44 +1,18 @@
-use crate::card::*;
+use crate::card;
 use eframe::{
     egui::{
         self,
-        FontData, FontDefinitions, FontFamily,
-        Button, Label,
-        Color32, Context, Hyperlink,
-        Layout, RichText, Separator, TextStyle, TopBottomPanel, Ui,
+        Context, Ui,
+        FontFamily, FontData, FontDefinitions, 
+        Label, RichText, Button, TextStyle, Hyperlink,
+        Color32, Layout, Separator, TopBottomPanel,
     },
     CreationContext,
     epaint,
 };
 
-pub struct ProjectCard {
-    pub image_path: String,
-    pub title: String,
-    pub description: String,
-}
-
-impl Default for ProjectCard {
-    fn default() -> Self {
-        return Self {
-            image_path: String::from(""),
-            title: String::from(""),
-            description: String::from(""),
-        };
-    }
-}
-
-impl ProjectCard {
-    pub fn init(&self) {
-        
-    }
-
-    pub fn render(&self) {
-        
-    }
-}
-
 pub struct PortfolioApp {
-    pub project_cards: Vec<ProjectCard>,
+    pub project_cards: Vec<card::ProjectCard>,
     pub dark_mode: bool,
 }
 
@@ -61,8 +35,17 @@ pub const RED: Color32 = Color32::from_rgb(255, 0, 0);
 
 
 impl PortfolioApp {
-    pub fn init(self, cc: &CreationContext) -> Self {
+    pub fn init(mut self, cc: &CreationContext) -> Self {
         self.configure_fonts(&cc.egui_ctx);
+
+        self.project_cards = Vec::new();
+
+        for i in 0..100 {
+            self.project_cards.push(card::ProjectCard::default());
+            self.project_cards[i].title = String::from(format!("Title #{}", i));
+            self.project_cards[i].description = String::from(format!("This is a description for 'Title #{}'", i));
+        }
+        self.project_cards[0].description = String::from("This is a super long description described to test out the features of long text handling. More strings, more strings, and more strings!!! I just need a little more xd.");
         return self;
     }
 
@@ -175,15 +158,22 @@ impl PortfolioApp {
     }
 
     pub fn render_projects(&self, ui: &mut Ui) {
-        self.create_project_card(ui, ProjectCard { image_path: String::from(""), title: String::from("Test"), description: String::from("This is just a description.") });
-    }
+        ui.heading("Projects");
 
-    pub fn create_project_card(&self, ui: &mut Ui, project_card: ProjectCard) {
-        create_card_frame().show(ui, |ui| {
-            ui.set_width(400.0);
-            ui.set_min_height(100.0);
-            ui.heading(project_card.title);
-            ui.label(project_card.description);
-        });
+        let project_cards_count: usize = self.project_cards.len();
+        let mut card_idx: usize = 0;
+
+        while card_idx < project_cards_count {
+            // fist width must be at least the same length, or else, nothing will be rendered for this row
+            let mut ui_available_width = f32::max(ui.available_width(), card::TOTAL_CARD_SIZE);
+
+            ui.horizontal(|ui| {
+                while card_idx < project_cards_count && ui_available_width >= card::TOTAL_CARD_SIZE {
+                    self.project_cards[card_idx].render(ui);
+                    card_idx += 1;
+                    ui_available_width = ui.available_width();
+                }
+            });
+        }
     }
 }

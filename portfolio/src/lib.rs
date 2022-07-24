@@ -5,7 +5,8 @@ use eframe::{
     egui::{ self, CentralPanel, ScrollArea, Visuals, },
     App,
 };
-pub use portfolio::{ PortfolioApp, ProjectCard, H_PADDING };
+pub use portfolio::*;
+pub use card::*;
 
 impl App for PortfolioApp {
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
