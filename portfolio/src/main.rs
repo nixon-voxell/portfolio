@@ -5,7 +5,7 @@ const APP_NAME: &str = "Portfolio";
 
 fn main() {
     let mut win_option = NativeOptions::default();
-    win_option.initial_window_size = Some(Vec2::new(540., 960.));
+    win_option.initial_window_size = Some(Vec2::new(600.0, 960.0));
 
     let  portfolio = PortfolioApp::default();
 

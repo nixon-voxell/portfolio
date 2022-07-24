@@ -1,11 +1,11 @@
 mod portfolio;
+mod card;
 
 use eframe::{
-    egui::{ self, CentralPanel, ScrollArea, Spinner, Visuals, Window, Layout, Separator, },
+    egui::{ self, CentralPanel, ScrollArea, Visuals, },
     App,
 };
-use portfolio::{render_footer, render_header, render_about};
-pub use portfolio::{ PortfolioApp, ProjectCard, PADDING };
+pub use portfolio::{ PortfolioApp, ProjectCard, H_PADDING };
 
 impl App for PortfolioApp {
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
@@ -16,10 +16,10 @@ impl App for PortfolioApp {
         else { ctx.set_visuals(Visuals::light()); }
 
         self.render_top_panel(ctx, frame);
-        render_footer(ctx);
+        self.render_footer(ctx);
 
         CentralPanel::default().show(ctx, |ui| {
-            render_header(ui);
+            self.render_header(ui);
             ScrollArea::vertical().show(ui, |ui| {
 
                 // Window::new("About").show(ctx,|ui| {
@@ -33,16 +33,16 @@ impl App for PortfolioApp {
                 let spacing = ui.spacing_mut();
                 spacing.item_spacing = egui::vec2(40.0, 20.0);
 
-                const ABOUT_PADDING: f32 = 100.0;
                 let available_width: f32 = ui.available_width();
-                ui.set_max_width(available_width - ABOUT_PADDING);
+                ui.set_max_width(available_width - H_PADDING);
 
                 ui.horizontal(|ui| {
                     // left padding
-                    ui.add_space(ABOUT_PADDING);
+                    ui.add_space(H_PADDING);
 
                     ui.vertical(|ui| {
-                        render_about(ui);
+                        self.render_about(ui);
+                        self.render_projects(ui);
                     });
                 });
             });
